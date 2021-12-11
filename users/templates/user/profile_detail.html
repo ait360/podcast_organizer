@@ -1,0 +1,33 @@
+{% extends parent_template|default:"user/base_user.html" %}
+
+{% block title %}
+{{ block.super }} -
+{{ profile.user.username }}'s Profile
+{% endblock %}
+
+{% block content %}
+    <h2>About {{ profile.name }}</h2>
+    {% if profile.user.display_picture %}
+    <img src="{{ profile.user.display_picture.url }}" />
+    {% endif %}
+    {% if profile.website %}
+    <a href="{{ profile.website }}">{{ profile.website }}</a>
+    {% endif %}
+    {% if profile.phone_number %}
+    {{ profile.phone_number }}
+    {% endif %}
+    {{ profile.bio|default:"No profile"|linebreaks }}
+
+    {% if user.pk == profile.user.pk %}
+    <ul>
+        <li>
+           <a href="{{ profile.get_update_url }}">edit</a>
+        </li>
+        <li>
+           <a href="{% url 'account_reset_password' %}">reset password</a>
+        </li>
+    </ul>
+    {% endif %}
+
+{% endblock %}
+

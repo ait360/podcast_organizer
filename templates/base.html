@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>
+      {% block title %}
+        Podcast Platform
+      {% endblock %}
+    </title>
+
+    {% block head %}{% endblock %}
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="status row">
+        <div class="offset-by-eight four columns">
+          <ul class="inline">
+            {% if user.is_authenticated %}
+              <li><a href="{{ user.profile.get_absolute_url }}">
+                View Profile</a></li>
+              <li><a href="{% url 'account_logout' %}?next={{ request.path }}">
+                Log Out</a></li>
+            {% else %}
+              <li><a href="{% url 'signup' %}">
+                Signup</a></li>
+              <li><a href="{% url 'account_login' %}?next={{ request.path }}">
+                Log In</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      <header class="row">
+        <div class="offset-by-one ten columns">
+          <h1 class="logo">Podcast Home</h1>
+        </div>
+      </header>
+<!--
+      {% if messages %}
+        <div class="row">
+          <div class="twelve columns">
+            <ul class="messages">
+              {% for message in messages %}
+                {% if message.tags %}
+                  <li class="{{ message.tags }}">
+                {% else %}
+                  <li>
+                {% endif %}
+                {{ message }}</li>
+              {% endfor %}
+        </ul></div></div>
+      {% endif %}
+      <main>
+
+      </main>
+    </div><!-- container -->
+      {% block content %}
+          This is default content!
+        {% endblock %}
+
+    <footer>
+      <p>
+        &copy; 2021
+        <a href="https://github.com/ait360/">
+          Theophilus</a>
+      </p>
+      <p>
+        Created for
+        <a href="https://github.com/ait360/">
+          Me</a>
+      </p>
+    </footer>
+
+  </body>
+
+</html>
