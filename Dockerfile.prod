@@ -1,0 +1,47 @@
+FROM python:3.9.6-alpine
+
+ENV HOME=/podcast
+RUN mkdir $HOME
+WORKDIR $HOME
+
+
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+
+COPY Pipfile Pipfile.lock $HOME/
+COPY . $HOME/
+#  pip install --upgrade pip &&
+RUN apk update \
+    && pip install pipenv \
+    # install packages needed for Pillow installation \
+    # in a virtual package
+    && apk add --update --no-cache --virtual .tmp zlib-dev \
+    jpeg-dev libc-dev linux-headers \
+    # install packages for psycopg2 installation
+    && apk add postgresql-dev gcc python3-dev musl-dev libffi libffi-dev\
+    # install packages for running Pillow and install python  \
+    # packages
+    && apk add libjpeg && pipenv install --system \
+    # del virtual package
+    && apk del .tmp \
+
+    && mkdir $HOME/staticfiles && mkdir $HOME/media \
+    && addgroup -S app && adduser -S app app \
+    && chown -R app:app $HOME && chmod -R 755 $HOME \
+    && chown -R app:app /usr/local/lib/python3.9/site-packages \
+    && chmod -R 755 /usr/local/lib/python3.9/site-packages
+
+
+
+
+COPY cover_picture.jpeg $HOME/media/
+COPY default_profile.png $HOME/media/
+
+
+
+
+USER app
+
+

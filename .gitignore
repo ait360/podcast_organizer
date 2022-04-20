@@ -1,5 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Docker
+.docker
+
+# Python
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*/__pycache__/
+
 .env.dev
+.env
 
+media/
+staticfiles/
+.env.prod
+podcast.pem
 
-/media
-/.idea
+.env.staging
+.env.staging.proxy-companion
+.env.pgadmin
+.dockerignore
+.idea/

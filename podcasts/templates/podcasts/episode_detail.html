@@ -1,0 +1,132 @@
+{% extends parent_template|default:"base.html" %}
+{% load static %}
+{% load listeners %}
+
+
+
+
+
+{% block title %}
+{{ block.super }} - {{ episode.title|title }}
+{% endblock %}
+
+{% block head %}
+    <link href="{% static 'css/episode_detail.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+    <audio src="" controls hidden></audio>
+
+    <div class="seek-bar-container">
+            <input type="range" name="" value="0" class="player-seek-bar">
+            <progress value="0" class="player-buffered-bar"></progress>
+            <input type="range" name="" value="1" min="0" max="2" step="0.1" class="playbackrate">
+            <span id="playbackrateid"></span>
+            <p class="current-time hide">00 : 00</p>
+            <p class="duration hide">00 : 00</p>
+    </div>
+
+
+    <div class="controls">
+        <div class="main">
+<!--                <i class="fas fa-backward active"></i>-->
+<!--                <span><i class="fa-solid fa-backward-fast"></i></span>-->
+                <span class="rewind" style="cursor: pointer">
+                    <i class="fa-solid fa-arrow-rotate-left"></i></span>
+                <span class="play" style="cursor: pointer">
+                    <i class="fas fa-play active"></i>
+                </span>
+                <span class="pause" style="cursor: pointer">
+                    <i class="fas fa-pause"></i>
+                </span>
+                <span class="fast-forward" style="cursor: pointer">
+                    <i class="fa-solid fa-arrow-rotate-right"></i></span>
+<!--                <span><i class="fa-solid fa-forward-fast"></i></span>-->
+
+<!--                <i class="fas fa-forward active"></i>-->
+        </div>
+    </div>
+
+    <input type="url" value="{{ episode.episode.url }}" hidden class="episodeurl">
+    <input type="text" value="{{ episode.id }}"  class="episodeid">
+
+    {% listener user episode  as listener_obj %}
+            {% if listener_obj %}
+                <input type="number" value="{{ listener_obj.time_listened }}" hidden class="user_episode_currentTime">
+            {% else %}
+                <input type="number" value="" hidden class="user_episode_currentTime">
+            {% endif %}
+
+    <span class="episode_play" style="cursor: pointer"
+            hx-post="{{ episode.get_paused_url }}"
+            hx-trigger="submitstarttime"
+            hx-swap="innerHTML"
+            hx-target="#play_status"
+            hx-headers="">
+                <i class="fas fa-play"></i>
+            </span>
+            <span class="episode_pause"  style="cursor: pointer"
+            hx-post="{{ episode.get_paused_url }}"
+            hx-trigger="submitcurrenttime"
+            hx-swap="innerHTML"
+            hx-target="#play_status"
+            hx-headers="">
+
+
+                <i class="fas fa-pause"></i>
+            </span>
+            <a href="{{ episode.get_download_url }}"><span style="cursor : pointer">
+                <i class="fa-solid fa-download"></i></span></a>
+            <span>created : {{ episode.created_on|timesince }} ago</span><br><br>
+            <span>published : {{ episode.publish_date|timesince }} ago</span>
+    <p id="play_status"></p>
+    <h2>{{ episode.name|title }}</h2>
+    <div id="like_dislike">
+        {% include 'podcasts/partials/episode_like_dislike.html'  %}
+    </div>
+    <br>
+    <div id="subscribe">
+        {% include 'podcasts/partials/channel_subscribe.html' with channel=episode.channel %}
+    </div>
+    <br>
+
+    {% if episode.image %}
+    <img src="{{ episode.image.url }}" height="200px" />
+    {% endif %}
+    <p>S{{ episode.season }} E{{ episode.number }}</p>
+
+    {{ episode.description|safe }}
+
+    <a href="{{ episode.channel.get_absolute_url }}">{{ episode.channel.name }}</a>
+    <h4>Hosts</h4>
+    <ul>
+        {% for host in episode.channel.hosts.all %}
+        <li><a href="{{ host.profile.get_absolute_url }}">{{ host.profile.name }} @{{ host.username }}</a></li>
+
+        {% endfor %}
+
+    </ul>
+
+    <h5>Contacts</h5>
+    <p>email: {{ episode.channel.email }}</p>
+    {% if episode.channel.website %}
+    <p>website: {{ episode.channel.website }}</p>
+    {% endif %}
+
+
+
+
+
+
+
+
+{% endblock %}
+<!-- <script type="text/javascript">
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}'
+    })
+</script> -->
+
+{% block javascript %}
+<script src="{% static 'js/episode_detail.js' %}" type="text/javascript"></script>
+{% endblock %}

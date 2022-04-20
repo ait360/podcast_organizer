@@ -1,0 +1,31 @@
+{% extends parent_template|default:"base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{{ block.super }} - Delete Channel
+{% endblock %}
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% block content %}
+    <h2>delete Channel</h2>
+    <form action="{{ channel.get_delete_url }}"
+          method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <button type="button">
+            <a href="{{ channel.get_absolute_url }}">Cancel</a>
+        </button>
+
+        <button type="submit">Delete Channel</button>
+    </form>
+{% endblock %}

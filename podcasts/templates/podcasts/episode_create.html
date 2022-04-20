@@ -1,0 +1,58 @@
+{% extends parent_template|default:"base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{{ block.super }} - Create Your Episode
+{% endblock %}
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% block content %}
+    <h2>Create New Episode</h2>
+    <div>
+    <button id="upload" class="btn btn-secondary">upload</button>
+    <form id="episode_create_form"
+          action="{{ channel.get_episode_create_url }}"
+          method="post" enctype="multipart/form-data"
+          hx-encoding='multipart/form-data'
+          hx-post="{{ channel.get_episode_create_url }}"
+          hx-trigger="formSubmit from:[id^=id_episode]"
+          hx-target="#uploaded"
+          hx-swap="innerHTML">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form|crispy }}
+
+        
+        <div id="uploaded">
+            
+        </div>
+
+        
+
+        <button type="submit" class="btn btn-primary">Save</button>
+
+    </form>
+    <br>
+
+        <div id="progressDiv" style="display: none">
+            <div class="progress" >
+              <div id='progress' class="progress-bar progress-bar-striped progress-bar-animated"  role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/create_update_episode.js' %}" type="text/javascript"></script>
+{% endblock %}

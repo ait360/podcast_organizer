@@ -1,0 +1,76 @@
+{% load listeners %}
+{% for episode in channel_episodes %}
+
+
+
+        {% if forloop.last %}
+            {% if page_obj.has_next %}
+                <div hx-get="{{ channel.get_episodes_list_url }}?page={{ page_obj.number|add:1}}"
+                hx-trigger="revealed" hx-swap="afterend" hx-target="this">
+
+            {% else %}
+                <div>
+            {% endif %}
+        {% else %}
+            <div>
+        {% endif %}
+                <h5><a href="{{ episode.get_absolute_url }}">
+                    {{ episode.title }}
+                </a> </h5>
+                {% if user in episode.channel.hosts.all %}
+                    <div id="status_{{ episode.id }}">
+                        {% include 'podcasts/partials/episode_status.html'  %}
+                    </div>
+                {% endif %}
+                <div>
+                    {{ episode.description|safe|truncatewords:2 }}
+                </div>
+
+                {% if user in channel.hosts.all %}
+                <a href="{% url 'channel_urls:episode_update' slug=channel.slug id=episode.id %}">
+                    update
+                </a>
+                {% endif %}
+
+    <!--            <audio src="{{ episode.episode.url }}" class="audio-source" controls></audio>-->
+                <input type="url" value="{{ episode.episode.url }}" hidden class="episodeurl">
+                <input type="text" value="{{ episode.id }}"  hidden class="episodeid">
+                {% listener user episode  as listener_obj %}
+                {% if listener_obj %}
+                    <input type="number" value="{{ listener_obj.time_listened }}" hidden class="user_episode_currentTime">
+                {% else %}
+                    <input type="number" value="" hidden class="user_episode_currentTime">
+                {% endif %}
+
+
+                <span class="episode_play" style="cursor: pointer"
+                hx-post="{{ episode.get_paused_url }}"
+                hx-trigger="submitstarttime"
+                hx-swap="innerHTML"
+                hx-target="#play_status"
+                hx-headers="">
+                    <i class="fas fa-play"></i>
+                </span>
+                <span class="episode_pause"  style="cursor: pointer"
+                hx-post="{{ episode.get_paused_url }}"
+                hx-trigger="submitcurrenttime"
+                hx-swap="innerHTML"
+                hx-target="#play_status"
+                hx-headers="">
+
+
+                    <i class="fas fa-pause"></i>
+                </span>
+                <a href="{{ episode.get_download_url }}"><span style="cursor : pointer">
+                    <i class="fa-solid fa-download"></i></span></a>
+                <span>created : {{ episode.created_on|timesince }} ago</span><br><br>
+                {% if episode.publish_date %}
+                <span>published : {{ episode.publish_date|timesince }} ago</span>
+                {% endif %}
+
+
+            </div>
+
+        {% empty %}
+            <p><em>No episodes Available</em></p>
+        {% endfor %}

@@ -1,0 +1,29 @@
+{% extends parent_template|default:"base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{{ block.super }} - update Channel
+{% endblock %}
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% block content %}
+    <h2>Update Channel: {{ channel.name }}</h2>
+    <form action="{{ channel.get_update_url }}"
+          method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form|crispy }}
+
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

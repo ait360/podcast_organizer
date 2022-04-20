@@ -1,0 +1,45 @@
+{% extends parent_template|default:"base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{{ block.super }} - list of Channels
+{% endblock %}
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% block content %}
+
+<a href="{% url 'channel_urls:channel_create' %}" class="btn btn-outline-primary">Create new Channel</a>
+    <h4>Channels you're subscribed to</h4>
+
+    {% for channel in channel_list %}
+        <div>
+            <h5><a href="{{ channel.get_absolute_url }}">
+                {{ channel.name }}
+            </a> </h5>
+            {% if user.is_authenticated and user in channel.hosts.all %}
+                <a href="{{ channel.get_update_url }}" class="btn btn-outline-primary">Update Channel Profile</a>
+            {% endif %}
+            <p>host:
+                {% for host in channel.hosts.all %}
+                    <a href="{{ host.profile.get_absolute_url }}">
+                        {{ host.profile.name }}
+                    </a>
+                {% endfor %}
+            </p>
+
+        </div>
+    {% empty %}
+        <p><em>No Channels Available</em></p>
+    {% endfor %}
+
+{% endblock %}

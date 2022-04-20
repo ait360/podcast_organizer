@@ -1,0 +1,9 @@
+location /static/ {
+        alias /podcast/staticfiles/;
+        add_header Access-Control-Allow-Origin *;
+    }
+
+    location /media/ {
+        alias /podcast/media/;
+        add_header Access-Control-Allow-Origin *;
+    }

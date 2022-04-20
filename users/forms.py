@@ -53,11 +53,12 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ('name', 'bio', 'website', 'phone_number',)
 
 
-class UserUpdateForm(UserChangeForm): #forms.ModelForm):
+class UserUpdateForm(forms.ModelForm): #forms.ModelForm):
 
     class Meta:
         model = get_user_model()
         fields = ('display_picture', 'username', 'email',  'cover_picture')
+
 
     def clean_username(self):
         username = self.cleaned_data['username']

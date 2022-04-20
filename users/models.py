@@ -1,5 +1,4 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
@@ -22,7 +21,7 @@ class Profile(models.Model):
                                 related_name='profile')
     name = models.CharField(max_length=200, )
     bio = models.TextField()
-    website = models.URLField(max_length=250)
+    website = models.URLField(max_length=250, help_text=_('eg https://www.podcast.com'))
     phone_number = PhoneNumberField(blank=True)
     slug = models.SlugField(max_length=150)
 
@@ -97,8 +96,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         },
     )
     email = models.EmailField(_('email address'), blank=False, unique=True)
-    display_picture = models.ImageField(upload_to=user_directory_path, blank=True)
-    cover_picture = models.ImageField(upload_to=user_cover_path, blank=True)
+    display_picture = models.ImageField(upload_to=user_directory_path, default='default_profile.png' )
+    cover_picture = models.ImageField(upload_to=user_cover_path, default='cover_picture.jpeg')
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_staff = models.BooleanField(
         _('staff status'),

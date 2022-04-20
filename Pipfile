@@ -4,14 +4,24 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
+django = "==3.2.12"
 psycopg2-binary = "==2.9.1"
-django-environ = "*"
+django-environ = "==0.8.1"
 django-allauth = "==0.43.0"
-setuptools-scm = "*"
+setuptools-scm = "==6.4.2"
 pillow = "==8.4.0"
-django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
+django-phonenumber-field = {extras = ["phonenumbers"], version = "==6.1.0"}
 django-crispy-forms = "==1.13.0"
+django-ckeditor-5 = "==0.0.14"
+django-ckeditor = "==6.2.0"
+django-htmx = "==1.8.0"
+fontawesomefree = "==6.0.0"
+django-bootstrap-datepicker-plus = "==4.0.0"
+asgiref = "==3.5.0"
+redis = "==4.1.4"
+celery = "==5.2.3"
+django-celery-beat = "==2.2.1"
+gunicorn = "==20.1.0"
 
 [dev-packages]
 

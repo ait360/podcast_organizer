@@ -10,8 +10,8 @@
 
 {% block content %}
     <h2>Update {{ profile.user.username }}</h2>
-    <form action="{{ get_update_url }}"
-          method="post">
+    <form action="{{ profile.get_update_url }}"
+          method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ user_form|crispy }}
         {{ profile_form|crispy }}

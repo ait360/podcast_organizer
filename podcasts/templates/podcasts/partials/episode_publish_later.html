@@ -1,0 +1,10 @@
+
+<form hx-encoding='multipart/form-data'
+      hx-post="{{ episode.get_publish_later_url }}"
+      hx-target="#status_{{ episode.id }}"
+      hx-swap="innerHTML">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-secondary">Publish</button>
+</form>

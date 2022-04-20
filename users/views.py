@@ -1,6 +1,6 @@
 from django.views.generic import DetailView, View
 from django.contrib.auth import get_user
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 
 from .forms import UserUpdateForm, ProfileUpdateForm, UserCreateForm
 from .models import Profile, User
-from .utils import UpdateMixin, ProfileGetObjectMixin
+from .utils import UpdateMixin, ProfileGetObjectMixin, ProfileGetUpdateObjectMixin
 
 from allauth.account.views import SignupView
 
@@ -50,9 +50,17 @@ class ProfileDetail(LoginRequiredMixin, ProfileGetObjectMixin,
 class PublicProfileDetail(DetailView):
     model = Profile
 
-class ProfileUpdate(LoginRequiredMixin, UpdateMixin, View):
+class ProfileUpdate(LoginRequiredMixin, UserPassesTestMixin,
+                    ProfileGetObjectMixin, UpdateMixin, View):
     models = {'user': User, 'profile': Profile}
     form_classes = {'user_form': UserUpdateForm,
                     'profile_form': ProfileUpdateForm}
     template_name = 'user/profile_update.html'
     redirect_url_namespace = 'user_urls'
+
+    def test_func(self):
+        profile = self.get_object()
+        return self.request.user == profile.user
+
+
+

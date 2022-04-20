@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: 363813902427.dkr.ecr.us-east-1.amazonaws.com/podcast-ec2:web
+    command: >
+      sh -c "python manage.py wait_for_db &&
+                     python manage.py makemigrations &&
+                     python manage.py migrate &&
+                     python manage.py collectstatic &&
+                     gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/podcast/staticfiles
+      - media_volume:/podcast/media
+    expose:
+      - 8000
+    restart: always
+    env_file:
+      - .env.staging
+
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+
+  # Celery
+  celery:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: 363813902427.dkr.ecr.us-east-1.amazonaws.com/podcast-ec2:celery
+    command: celery -A config worker -l INFO
+    container_name: celery
+    depends_on:
+      - redis
+      - web
+    env_file:
+      - .env.staging
+
+  celery_beat_scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: 363813902427.dkr.ecr.us-east-1.amazonaws.com/podcast-ec2:celery_beat
+    command: celery -A config beat -l info
+    restart: always
+    env_file:
+      - .env.staging
+    depends_on:
+      - redis
+      - celery
+      - web
+
+
+  nginx-proxy:
+    container_name: nginx-proxy
+    build: ./nginx_aws
+    image: 363813902427.dkr.ecr.us-east-1.amazonaws.com/podcast-ec2:nginx-proxy
+    ports:
+      - 443:443
+      - 80:80
+    restart: always
+    volumes:
+      - static_volume:/podcast/staticfiles
+      - media_volume:/podcast/media
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    depends_on:
+      - web
+
+  nginx-proxy-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    env_file:
+      - .env.staging.proxy-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - acme:/etc/acme.sh
+    depends_on:
+      - nginx-proxy
+
+
+
+volumes:
+  static_volume:
+  media_volume:
+  certs:
+  html:
+  vhost:
+  acme:

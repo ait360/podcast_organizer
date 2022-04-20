@@ -1,0 +1,46 @@
+
+<div style="display:flex">
+    {% if user in episode.likes.all %}
+        <div style="cursor: pointer"
+            hx-post="{{ episode.get_like_url }}"
+            hx-target="#like_dislike"
+            hx-swap="innerHTML"
+            hx-trigger="click">
+            <i class="fa-solid fa-thumbs-up"></i>
+        </div>
+
+        {% else %}
+        <div style="cursor: pointer"
+            hx-post="{{ episode.get_like_url }}"
+            hx-target="#like_dislike"
+            hx-swap="innerHTML"
+            hx-trigger="click">
+            <i class="fa-regular fa-thumbs-up"></i>
+        </div>
+        {% endif %}
+
+        <div>
+            &nbsp;&nbsp;{{ episode.get_like_count }}&nbsp;&nbsp;
+        </div>
+
+        {% if user in episode.dislikes.all %}
+            <div style="cursor: pointer"
+            hx-post="{{ episode.get_dislike_url }}"
+            hx-target="#like_dislike"
+            hx-swap="innerHTML">
+            <i class="fa-solid fa-thumbs-down"></i>
+            </div>
+        {% else %}
+            <div style="cursor: pointer"
+            hx-post="{{ episode.get_dislike_url }}"
+            hx-target="#like_dislike"
+            hx-swap="innerHTML">
+            <i class="fa-regular fa-thumbs-down"></i>
+            </div>
+        {% endif %}
+
+         &nbsp;&nbsp;{{ episode.get_dislike_count }}
+
+</div>
+
+

@@ -1,0 +1,55 @@
+{% extends parent_template|default:"base.html" %}
+{% load static %}
+
+
+
+
+{% block title %}
+{{ block.super }} - {{ channel.name|title }}
+{% endblock %}
+
+{% block content %}
+    <h2>About {{ channel.name|title }}</h2>
+    {% if user.is_authenticated and user in channel.hosts.all %}
+        <a href="{{ channel.get_update_url }}" class="btn btn-outline-primary">Update Channel Profile</a>
+    {% endif %}
+
+    <div id="subscribe">
+    {% include 'podcasts/partials/channel_subscribe.html' %}
+    </div>
+
+    {% if channel.display_picture %}
+    <img src="{{ channel.display_picture.url }}" height="200px" />
+    {% endif %}
+
+    {% if channel.cover_picture %}
+    <img src="{{ channel.cover_picture.url }}" height="200px"/>
+    {% endif %}
+    <div>
+        <a href="{{ channel.get_episodes_list_url }}">Episodes</a>
+    </div>
+
+
+
+    <h4>Hosts</h4>
+    <ul>
+        {% for host in channel.hosts.all %}
+            <li><a href="{{ host.profile.get_absolute_url }}">{{ host.profile.name }} @{{ host.username }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h5>Contacts</h5>
+    <p>email: {{ channel.email }}</p>
+        {% if channel.website %}
+    <p>website: {{ channel.website }}</p>
+    {% endif %}
+
+    {% if user in channel.hosts.all %}
+    <a href="{{ channel.get_delete_url }}">Delete Channel</a>
+    {% endif %}
+
+
+
+
+
+{% endblock %}

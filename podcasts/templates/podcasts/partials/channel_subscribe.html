@@ -1,0 +1,16 @@
+
+    <p>Number of subscribers: {{ channel.get_subscribers_count }}</p>
+        {% if user in channel.subscribers.all %}
+            <button type="submit"
+            hx-post="{{ channel.get_subscribe_url }}"
+            hx-target="#subscribe"
+            hx-swap="innerHTML"
+            hx-confirm="Unsubscribe"
+            class="btn btn-danger">Subscribed</button>
+        {% else %}
+            <button type="submit"
+            hx-post="{{ channel.get_subscribe_url }}"
+            hx-target="#subscribe"
+            hx-swap="innerHTML"
+            class="btn btn-success">Subscribe</button>
+        {% endif %}

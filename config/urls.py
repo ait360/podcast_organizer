@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .static import serve
 
 from users.views import SignUpView
 from allauth.account.views import LoginView
@@ -32,13 +33,19 @@ admin.site.site_title = 'Podcast Admin Site'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('channel/', include('podcasts.urls.channel_urls', namespace='channel_urls')),
+    path('', include('podcasts.urls.channel_urls')),
     path('user/', include('users.urls', namespace='user_urls')),
+    path('episode/', include('podcasts.urls.episode_urls', namespace='episode_urls')),
     path('accounts/signup/', SignUpView.as_view(), name='signup'),
-    # path('accounts/login/', LoginView.as_view(), name='account_login'),
+    #path('podcasts/', include('podcasts.urls', namespace='podcasts_urls')),
     path('accounts/', include('allauth.urls'),),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+    #path("ckeditor5/", include('django_ckeditor_5.urls')),
 
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, view=serve, document_root=settings.MEDIA_ROOT)
+    # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

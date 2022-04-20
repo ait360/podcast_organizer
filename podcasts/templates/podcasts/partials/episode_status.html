@@ -1,0 +1,29 @@
+    {% if episode.status == 'Draft' %}
+        <p>Saved as Draft</p>
+        <button id="publishNow" class="btn btn-primary"
+        hx-post="{{ episode.get_publish_url }}"
+        hx-target="#status_{{ episode.id }}"
+        hx-swap="innerHTML">Publish Now</button>
+        <button id="publishLater_{{ episode.id }}" class="btn btn-primary"
+        hx-get="{{ episode.get_publish_later_url }}"
+        hx-swap="outerHTML">Publish Later</button>
+    {% elif episode.status == 'Published' or episode.status == 'Pending' %}
+        {% if episode.status == 'Published' %}
+        <p>Published</p>
+        {% elif episode.status == 'Pending' %}
+        <p>Pending</p>
+        {% endif %}
+        <button class="btn btn-primary"
+        hx-post="{{ episode.get_publish_url }}"
+        hx-target="#status_{{ episode.id }}"
+        hx-swap="innerHTML">Withdraw</button>
+    {% else %}
+        <p>Withdrawn</p>
+        <button id="republishNow" class="btn btn-primary"
+        hx-post="{{ episode.get_publish_url }}"
+        hx-target="#status_{{ episode.id }}"
+        hx-swap="innerHTML">Re-publish Now</button>
+        <button id="republishLater_{{ episode.id }}" class="btn btn-primary"
+        hx-get="{{ episode.get_publish_later_url }}"
+        hx-swap="outerHTML">Re-publish Later</button>
+    {% endif %}

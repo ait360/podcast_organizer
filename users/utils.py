@@ -40,7 +40,6 @@ class UpdateMixin:
 
         user_form = self.form_classes['user_form'](instance=user, initial=self.initial)
         profile_form = self.form_classes['profile_form'](instance=profile)
-
         context= {'user_form': user_form, 'profile_form': profile_form,
                   'user' : user, self.models['profile'].__name__.lower():profile}
 
@@ -80,5 +79,17 @@ class UpdateMixin:
 class ProfileGetObjectMixin:
 
     def get_object(self, queryset=None):
-        current_user = get_user(self.request)
-        return current_user.profile
+
+        try:
+            profile = get_object_or_404(self.models['profile'], slug__iexact=self.kwargs.get('username'))
+            return profile
+        except:
+            profile = get_object_or_404(self.model, slug__iexact=self.kwargs.get('username'))
+            return profile
+
+
+class ProfileGetUpdateObjectMixin:
+
+    def get_object(self, queryset=None):
+        profile = get_object_or_404(self.models['profile'], slug__iexact=self.kwargs.get('username'))
+        return profile
