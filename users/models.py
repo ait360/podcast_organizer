@@ -21,7 +21,7 @@ class Profile(models.Model):
                                 related_name='profile')
     name = models.CharField(max_length=200, )
     bio = models.TextField()
-    website = models.URLField(max_length=250, help_text=_('eg https://www.podcast.com'))
+    website = models.URLField(max_length=250, blank=True, help_text=_('eg https://www.podcast.com'))
     phone_number = PhoneNumberField(blank=True)
     slug = models.SlugField(max_length=150)
 
