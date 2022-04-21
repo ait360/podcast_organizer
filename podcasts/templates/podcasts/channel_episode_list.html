@@ -23,8 +23,10 @@
 
 {% block content %}
 
+{% if user in channel.hosts.all %}
 <a href="{{ channel.get_episode_create_url }}" class="btn btn-outline-primary">Create new Episode</a>
     <h4>{{ channel.name }} Episodes </h4>
+{% endif %}
 
     <audio src="" controls hidden></audio>
 
@@ -74,17 +76,12 @@
     </div>
 
 
-        <div><p>host:</p>
-            {% for host in channel.hosts.all %}
-
-                <a href="{{ host.profile.get_absolute_url }}">
-                    {{ host.profile.name }}
-                </a>&nbsp;
-
-            {% endfor %}
-
-
-        </div>
+        <h4>Hosts</h4>
+    <ul>
+        {% for host in channel.hosts.all %}
+            <li><a href="{{ host.profile.get_absolute_url }}">{{ host.profile.name }} @{{ host.username }}</a></li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}
 

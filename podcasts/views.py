@@ -118,13 +118,18 @@ class ChannelEpisodes(LoginRequiredMixin, ListView):
         return context
 
 
-class EpisodeCreate(LoginRequiredMixin, EpisodeCreateMixin, View):
+class EpisodeCreate(LoginRequiredMixin, UserPassesTestMixin,
+                    EpisodeCreateMixin, View):
     model = Episode
     channel_model = Channel
     form_class = EpisodeForm
     template_name = 'podcasts/episode_create.html'
     redirect_url_namesapce = 'channel_urls'
     context_object_name = 'episode'
+
+    def test_func(self):
+        channel = get_object_or_404(self.channel_model, slug__iexact=self.kwargs.get('slug'))
+        return self.request.user in channel.hosts.all()
 
 class EpisodeUpdate(LoginRequiredMixin, UserPassesTestMixin,
                     EpisodeUpdateMixin, View):

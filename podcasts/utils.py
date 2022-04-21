@@ -219,6 +219,8 @@ class EpisodeCreateMixin:
         return reverse_lazy('channel_urls:channel_episodes', kwargs={'slug':self.kwargs.get('slug')})
 
 
+
+
 class EpisodeUpdateMixin:
     model = None
     channel_model = None
