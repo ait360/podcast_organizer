@@ -48,7 +48,7 @@
     </div>
 
     <input type="url" value="{{ episode.episode.url }}" hidden class="episodeurl">
-    <input type="text" value="{{ episode.id }}"  class="episodeid">
+    <input type="text" value="{{ episode.id }}" hidden class="episodeid">
 
     {% listener user episode  as listener_obj %}
             {% if listener_obj %}
