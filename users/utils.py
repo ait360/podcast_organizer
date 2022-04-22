@@ -60,10 +60,10 @@ class UpdateMixin:
                                 request.FILES, instance=profile)
 
             if user_form.is_valid() and profile_form.is_valid():
-                user_form.save(request=request, profile=profile)
+                user = user_form.save(request=request, profile=profile)
                 profile_form.save()
                 success(request, _('Updated!!'))
-                return redirect(self.get_success_url(username=username))
+                return redirect(self.get_success_url(username=user.username))
             else:
                 context = {'user_form': user_form, 'profile_form': profile_form,
                   'user' : user, self.models['profile'].__name__.lower():profile}
