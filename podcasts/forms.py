@@ -71,6 +71,8 @@ class ChannelForm(forms.ModelForm):
 
 
 class EpisodeForm(forms.ModelForm):
+
+    duration = forms.FloatField(widget=forms.HiddenInput)
     class Meta:
         model = Episode
         fields = ['title', 'image', 'season', 'number', 'description',
