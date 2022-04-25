@@ -30,7 +30,7 @@ class SignUpView(SignupView):
 
         if user.is_active and user.profile.name == '':
             return reverse_lazy('user_urls:profile_update', kwargs={'username':user.username})
-        elif user.is_active and not user.profile.name == '':
+        elif user.is_active and user.profile.name != '':
             return reverse_lazy('user_urls:profile_detail', kwargs={'username':user.username})
 
         return super().get_success_url()

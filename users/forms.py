@@ -2,8 +2,11 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import Profile
+from .models import Profile, validate_profile_slug
 from allauth.account.forms import SignupForm
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.exceptions import ValidationError
 
 
 
@@ -22,11 +25,12 @@ class UserCreateForm(SignupForm): #, UserCreationForm):
         #username = self.cleaned_data['username']
         disallowed = ('activate', 'signup', 'disable', 'login', 'logout',
                       'password', 'posts', 'tags', 'post', 'tag', 'ckeditor',
-                      'admin')
+                      'admin', 'channel', 'episode')
         if username in disallowed:
             raise ValueError("A user with that username already exists.")
         # if username and get_user_model().objects.filter(username__iexact=username).exists():
         #     self.add_error('username', 'A user with that username already exists.')
+
         return username
 
     # def save(self, **kwargs):
@@ -53,7 +57,19 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ('name', 'bio', 'website', 'phone_number',)
 
 
+
+
+
 class UserUpdateForm(forms.ModelForm): #forms.ModelForm):
+
+    username_validator = UnicodeUsernameValidator()
+    username = forms.CharField(
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator, validate_profile_slug],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
 
     class Meta:
         model = get_user_model()
@@ -66,6 +82,14 @@ class UserUpdateForm(forms.ModelForm): #forms.ModelForm):
                       'password')
         if username in disallowed:
             raise ValueError("A user with that username already exists.")
+
+        # if self.has_changed():
+        #     if 'username' in self.changed_data:
+        #
+        #         query = Profile.objects.filter(slug__iexact=slugify(username))
+        #
+        #         if query:
+        #             raise ValueError("A user with that username already exists.")
         return username
 
     def save(self, **kwargs):

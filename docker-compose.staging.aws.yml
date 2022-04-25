@@ -62,8 +62,8 @@ services:
     build: ./nginx_aws
     image: 363813902427.dkr.ecr.us-east-1.amazonaws.com/podcast-ec2:nginx-proxy
     ports:
-      - 443:443
       - 80:80
+      - 443:443
     restart: always
     volumes:
       - static_volume:/podcast/staticfiles

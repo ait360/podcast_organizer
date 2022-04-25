@@ -22,6 +22,7 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_protect
 from django.utils.text import slugify
+from .models import Profile
 from django.views.generic import UpdateView as BaseUpdateView
 
 class UpdateMixin:
@@ -32,10 +33,10 @@ class UpdateMixin:
     initial = {}
 
     def get(self, request, username):
-        user = get_object_or_404(self.models['user'], username__iexact=username)
+        user = get_object_or_404(self.models['user'], profile__slug__iexact=slugify(username))
         self.initial = model_to_dict(user)
         profile = get_object_or_404(self.models['profile'],
-                                    slug__iexact=username)
+                                    slug__iexact=slugify(username))
 
 
         user_form = self.form_classes['user_form'](instance=user, initial=self.initial)
@@ -48,9 +49,9 @@ class UpdateMixin:
 
     @method_decorator(csrf_protect)
     def post(self, request, username):
-        user = get_object_or_404(self.models['user'], username__iexact=username)
+        user = get_object_or_404(self.models['user'], profile__slug__iexact=slugify(username))
         profile = get_object_or_404(self.models['profile'],
-                                    slug__iexact=username)
+                                    slug__iexact=slugify(username))
 
         if request.user.is_authenticated and request.user.id == user.id:
             user_form = self.form_classes['user_form'](request.POST, request.FILES,
@@ -81,15 +82,18 @@ class ProfileGetObjectMixin:
     def get_object(self, queryset=None):
 
         try:
-            profile = get_object_or_404(self.models['profile'], slug__iexact=self.kwargs.get('username'))
+            profile = get_object_or_404(self.models['profile'], slug__iexact=slugify(self.kwargs.get('username')))
             return profile
         except:
-            profile = get_object_or_404(self.model, slug__iexact=self.kwargs.get('username'))
+            profile = get_object_or_404(self.model, slug__iexact=slugify(self.kwargs.get('username')))
             return profile
 
 
 class ProfileGetUpdateObjectMixin:
 
     def get_object(self, queryset=None):
-        profile = get_object_or_404(self.models['profile'], slug__iexact=self.kwargs.get('username'))
+        profile = get_object_or_404(self.models['profile'], slug__iexact=slugify(self.kwargs.get('username')))
         return profile
+
+
+

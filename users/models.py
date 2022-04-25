@@ -10,6 +10,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 
 
 
@@ -23,7 +24,7 @@ class Profile(models.Model):
     bio = models.TextField()
     website = models.URLField(max_length=250, blank=True, help_text=_('eg https://www.podcast.com'))
     phone_number = PhoneNumberField(blank=True)
-    slug = models.SlugField(max_length=150)
+    slug = models.SlugField(max_length=150, unique=True)
 
     def __str__(self):
         return self.name
@@ -81,6 +82,13 @@ def user_directory_path(instance, filename):
 def user_cover_path(instance, filename):
     return 'user_cover_{0}/{1}'.format(instance.username, filename)
 
+def validate_profile_slug(value):
+
+    if not User.objects.filter(username__iexact=value).exists():
+
+        if Profile.objects.filter(slug__iexact=slugify(value)).exists():
+            raise ValidationError(_("A user with that username already exists."))
+
 class User(AbstractBaseUser, PermissionsMixin):
 
     username_validator = UnicodeUsernameValidator()
@@ -90,9 +98,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=150,
         unique=True,
         help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
-        validators=[username_validator],
+        validators=[username_validator, validate_profile_slug],
         error_messages={
-            'unique': _("A users with that username already exists."),
+            'unique': _("A user with that username already exists."),
         },
     )
     email = models.EmailField(_('email address'), blank=False, unique=True)
