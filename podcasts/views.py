@@ -102,7 +102,7 @@ class ChannelEpisodes(LoginRequiredMixin, ListView):
         channel = Channel.objects.get(slug=self.kwargs.get('slug'))
 
         if user in channel.hosts.all():
-            self.episodes = self.model.objects.filter(channel=channel).order_by('publish_date', 'created_on')#get_object_or_404(self.model, slug__iexact=self.kwargs.get('slug'))
+            self.episodes = self.model.objects.filter(channel=channel).order_by('-publish_date', '-created_on')#get_object_or_404(self.model, slug__iexact=self.kwargs.get('slug'))
             return self.episodes
 
         else:
