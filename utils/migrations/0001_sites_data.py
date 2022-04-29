@@ -7,8 +7,8 @@ from django.db import migrations
 
 def add_site_data(apps, schema_editor):
     Site = apps.get_model('sites', 'Site')
-    new_domain = 'podcast.com'
-    new_name = 'Podcast dot Com'
+    new_domain = 'podcasthub.ga'
+    new_name = 'Podcasthub dot Ga'
     site_id = getattr(settings, 'SITE_ID', 1)
     if Site.objects.exists():
         current_site = Site.objects.get(
